@@ -12,13 +12,12 @@ contract SupplyChain {
         string name;
         uint quantity;
         address producer;
-        address distributor;
         address retailer;
     }
     
     mapping(uint => Product) public products;
 
-    event ProductCreated(uint productId, string name, uint quantity, address producer, address distributor, address retailer);
+    event ProductCreated(uint productId, string name, uint quantity, address producer, address retailer);
     event StateChanged(uint productId, SupplyChainState newState);
     event QuantityUpdated(uint productId, uint newQuantity);
     event OwnershipTransferred(address newOwner);
@@ -42,19 +41,18 @@ contract SupplyChain {
         owner = msg.sender;
     }
 
-    function createProduct(string memory _name, uint _quantity, address _producer, address _distributor, address _retailer) public onlyOwner {
+    function createProduct(string memory _name, uint _quantity, address _producer, address _retailer) public onlyOwner {
         productId++;
         products[productId] = Product({
             name: _name,
             quantity: _quantity,
             producer: _producer,
-            distributor: _distributor,
             retailer: _retailer
         });
         
         currentState = SupplyChainState.Created;
         
-        emit ProductCreated(productId, _name, _quantity, _producer, _distributor, _retailer);
+        emit ProductCreated(productId, _name, _quantity, _producer, _retailer);
     }
 
     function changeState(uint _productId, SupplyChainState _newState) public onlyOwner validProduct(_productId) {
@@ -72,8 +70,8 @@ contract SupplyChain {
         emit OwnershipTransferred(_newOwner);
     }
 
-    function getProductDetails(uint _productId) public view returns (string memory, uint, address, address, address) {
+    function getProductDetails(uint _productId) public view returns (string memory, uint, address, address) {
         Product storage product = products[_productId];
-        return (product.name, product.quantity, product.producer, product.distributor, product.retailer);
+        return (product.name, product.quantity, product.producer, product.retailer);
     }
 }
